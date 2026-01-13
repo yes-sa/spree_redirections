@@ -10,8 +10,12 @@ module SpreeRedirections
       update!(deleted_at: Time.current)
     end
 
+    private
+
     def correct_http_status
-      %w[301 302 303].include?(self.http_status)
+      return if %w[301 302 303].include?(self.http_status)
+
+      errors.add(:base, I18n.t('spree.errors.invalid_http_status'))
     end
   end
 end

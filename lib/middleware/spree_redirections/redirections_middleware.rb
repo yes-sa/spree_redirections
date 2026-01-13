@@ -8,6 +8,9 @@ class RedirectionsMiddleware
       status, headers, body = @app.call(env)
     rescue StandardError => e
       routing_error = e
+      status = 404
+      headers = {}
+      body = []
     end
 
     if (routing_error.present? || status == 404)
@@ -25,10 +28,14 @@ class RedirectionsMiddleware
 
     [ status, headers, body ]
   rescue StandardError => e
+    capture_message(e)
+    raise
+  end
+
+  def capture_message(e)
     Sentry.capture_exception(RedirectionServiceError.new(e&.full_message),
                              level: 'error',
                              tags: { component: 'middleware', category: 'redirections' },
                              extra: { url: @old_url_joined, store: @store&.id })
   end
-
 end

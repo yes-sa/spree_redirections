@@ -1,7 +1,7 @@
-# Sample localization file for English. Add more files in this directory for other locales.
-# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
-
+---
 en:
   spree:
+    errors:
+      invalid_http_status: Invalid HTTP status
     redirections:
-      hello: "Hello SpreeRedirections"
+      hello: Hello SpreeRedirections

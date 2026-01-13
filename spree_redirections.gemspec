@@ -20,10 +20,15 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree', '>= 5.2.4'
-  s.add_dependency 'spree_storefront', '>= 5.2.4'
-  s.add_dependency 'spree_admin', '>= 5.2.4'
+  spree_opts = '~> 5.2'
+  s.add_dependency 'spree', spree_opts
+  s.add_dependency 'spree_api', spree_opts
+  s.metadata['rubygems_mfa_required'] = 'true'
+
   s.add_dependency 'spree_extension'
+  s.add_dependency 'rspec-rails'
+  s.add_dependency 'rubocop-rspec'
+  s.add_dependency 'rails', '~> 7.2'
 
   s.add_development_dependency 'spree_dev_tools'
 end

@@ -3,5 +3,6 @@ en:
   spree:
     errors:
       invalid_http_status: Invalid HTTP status
-    redirections:
-      hello: Hello SpreeRedirections
+      store_not_found: Store not found
+    redirection:
+      redirecting: Redirecting...

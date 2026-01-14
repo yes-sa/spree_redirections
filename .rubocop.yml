@@ -7,7 +7,7 @@ AllCops:
   TargetRubyVersion: 3.4
   Exclude:
     - spec/dummy/**/*
-    - lib/generators/**/*
+    - lib/**
     - bin/**
     - config/**/*
     - vendor/**/*
@@ -31,3 +31,12 @@ RSpec/MultipleExpectations:
 RSpec/ExampleLength:
   Exclude:
     - spec/**/*
+RSpec/NestedGroups:
+  Exclude:
+    - spec/**/*
+RSpec/ContextWording:
+  Exclude:
+    - spec/**/*
+Metrics/MethodLength:
+  Exclude:
+    - lib/middleware/spree_redirections/redirections_middleware.rb

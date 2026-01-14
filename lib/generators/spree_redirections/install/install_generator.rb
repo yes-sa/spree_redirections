@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SpreeRedirections
   module Generators
     class InstallGenerator < Rails::Generators::Base
@@ -12,7 +14,7 @@ module SpreeRedirections
         if run_migrations
           run 'bin/rails db:migrate'
         else
-          puts 'Skipping rails db:migrate, don\'t forget to run it!'
+          Rails.logger.debug 'Skipping rails db:migrate, don\'t forget to run it!'
         end
       end
     end

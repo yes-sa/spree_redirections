@@ -14,8 +14,8 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
   end
 
   let(:redirection) { described_class.new(valid_attributes) }
-  let(:spree_store_finder){ instance_double(Spree::Stores::FindCurrent) }
-  let(:store){ create(:store, default: true) }
+  let(:spree_store_finder) { instance_double(Spree::Stores::FindCurrent) }
+  let(:store) { create(:store, default: true) }
 
   before do
     allow(Spree).to receive(:current_store_finder).and_return(spree_store_finder)
@@ -65,22 +65,23 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
 
     context 'existing_store validation' do
       context 'with correct store_url' do
-          it "is valid" do
-            expect(redirection).to be_valid
-          end
+        it 'is valid' do
+          expect(redirection).to be_valid
+        end
       end
 
       context 'with not existing store_url' do
         before do
           allow(spree_store_finder).to receive(:execute).and_return(nil)
         end
-          it "is not valid" do
-            redirection.store_url = 'not_exists'
 
-            expect(redirection).not_to be_valid
-            expect(redirection.errors[:base])
-              .to include(I18n.t('spree.errors.store_not_found'))
-          end
+        it 'is not valid' do
+          redirection.store_url = 'not_exists'
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:base])
+            .to include(I18n.t('spree.errors.store_not_found'))
+        end
       end
     end
   end

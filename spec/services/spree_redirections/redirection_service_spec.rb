@@ -8,16 +8,8 @@ RSpec.describe SpreeRedirections::RedirectionService, type: :service do
   let(:old_url) { '/nieistnieje' }
   let(:query_string) { 'asd=2' }
   let(:server_name) { 'localhost' }
-
   let(:store) { instance_double(Spree::Store, url: store_url) }
   let(:store_url) { 'localhost' }
-  let(:store_finder) { instance_double('StoreFinder') }
-
-  before do
-    allow(Spree).to receive(:current_store_finder).and_return(store_finder)
-    allow(store_finder).to receive(:new).with(url: server_name).and_return(store_finder)
-    allow(store_finder).to receive(:execute).and_return(store)
-  end
 
   describe '#call' do
     context 'when store is blank' do
@@ -50,12 +42,12 @@ RSpec.describe SpreeRedirections::RedirectionService, type: :service do
       end
 
       it 'looks up by joined old_url + query_string and store_url and returns nil' do
-        expect(SpreeRedirections::Redirection).to receive(:find_by).with(
+        expect(service_call).to be_nil
+
+        expect(SpreeRedirections::Redirection).to have_received(:find_by).with(
           old_url: '/nieistnieje?asd=2',
           store_url: store_url
         )
-
-        expect(service_call).to be_nil
       end
     end
 
@@ -79,12 +71,11 @@ RSpec.describe SpreeRedirections::RedirectionService, type: :service do
       end
 
       it 'queries by joined url and store_url' do
-        expect(SpreeRedirections::Redirection).to receive(:find_by).with(
+        service_call
+        expect(SpreeRedirections::Redirection).to have_received(:find_by).with(
           old_url: '/nieistnieje?asd=2',
           store_url: store_url
         )
-
-        service_call
       end
     end
 
@@ -96,12 +87,11 @@ RSpec.describe SpreeRedirections::RedirectionService, type: :service do
       end
 
       it "joins with '?' then strips trailing '?' so it searches just the path" do
-        expect(SpreeRedirections::Redirection).to receive(:find_by).with(
+        service_call
+        expect(SpreeRedirections::Redirection).to have_received(:find_by).with(
           old_url: '/nieistnieje',
           store_url: store_url
         )
-
-        service_call
       end
     end
 
@@ -114,15 +104,14 @@ RSpec.describe SpreeRedirections::RedirectionService, type: :service do
       end
 
       it 'normalizes by trimming whitespace and removing trailing / ? spaces' do
-        expect(SpreeRedirections::Redirection).to receive(:find_by).with(
-          old_url: '/nieistnieje/ ?asd=2'.sub(%r{[/?\s]*$}, '').strip, # not super readable
-          store_url: store_url
-        )
-
         expected = [old_url, query_string].join('?').sub(%r{[/?\s]*$}, '').strip
-        expect(expected).to eq('/nieistnieje/ ?asd=2'.strip.sub(%r{[/?\s]*$}, '')) # sanity
+        expect(expected).to eq('/nieistnieje/ ?asd=2'.strip.sub(%r{[/?\s]*$}, ''))
 
         service_call
+        expect(SpreeRedirections::Redirection).to have_received(:find_by).with(
+          old_url: '/nieistnieje/ ?asd=2'.sub(%r{[/?\s]*$}, '').strip,
+          store_url: store_url
+        )
       end
     end
 

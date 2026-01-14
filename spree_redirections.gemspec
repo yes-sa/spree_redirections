@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_redirections'
   s.version     = SpreeRedirections::VERSION
   s.summary     = 'Spree Commerce Redirections Extension'
-  s.required_ruby_version = '>= 3.0'
+  s.required_ruby_version = '>= 3.4'
 
   s.author    = 'Tomasz Strzeszewski'
   s.email     = 'tomasz.strzeszewski.s@gmail.com'
@@ -32,6 +32,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'rspec-rails'
   s.add_dependency 'rubocop-rspec'
   s.add_dependency 'spree_extension'
-
-  s.add_development_dependency 'spree_dev_tools'
 end

@@ -7,7 +7,7 @@ class CreateRedirection < ActiveRecord::Migration[7.2]
       t.string :old_url, null: false
       t.string :new_url, null: false
       t.string :http_status, null: false
-      t.boolean :external_redirection, default: false
+      t.boolean :external_redirection, default: false, null: false
       t.timestamps
       t.datetime :deleted_at
     end

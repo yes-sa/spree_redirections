@@ -15,6 +15,7 @@ group :development, :test do
   gem 'rubocop', '~> 1.79', '>= 1.79.2'
   gem 'rubocop-rails', '~> 2.33', '>= 2.33.3'
   gem 'rubocop-rails-omakase'
+  gem 'spree_dev_tools'
   gem 'sqlite3', '>= 2.0'
 end
 

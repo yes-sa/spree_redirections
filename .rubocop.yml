@@ -2,15 +2,15 @@ plugins:
   - rubocop-rails
 
 AllCops:
-  DisplayCopNames: true
-  TargetRubyVersion: 3.3
-  Include:
-    - '**/Gemfile'
-    - '**/Rakefile'
-    - '**/Appraisals'
+  NewCops: enable
+  TargetRubyVersion: 3.4
   Exclude:
-    - 'spec/dummy/**/*'
-    - 'lib/generators/**/*'
+    - spec/dummy/**/*
+    - lib/generators/**/*
+    - bin/**
+    - config/**/*
+    - vendor/**/*
+    - Rakefile
 
 Layout/LineLength:
   Max: 150
@@ -20,5 +20,6 @@ Layout/LineLength:
 Style/Documentation:
   Enabled: false
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*

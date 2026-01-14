@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -5,7 +7,6 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails-controller-testing'
 gemspec
 
 group :development, :test do
@@ -19,16 +20,16 @@ end
 
 group :test do
   spree_opts = '~> 5.2'
-  gem 'spree', spree_opts
-  gem 'spree_emails', spree_opts
-  gem 'spree_admin', spree_opts
-  gem 'spree_storefront', spree_opts
   gem 'abbrev'
   gem 'factory_bot_rails'
   gem 'ffaker'
   gem 'observer'
   gem 'rails-controller-testing'
+  gem 'spree', spree_opts
+  gem 'spree_admin', spree_opts
+  gem 'spree_emails', spree_opts
+  gem 'spree_storefront', spree_opts
   gem 'webmock'
 end
 
-gem "sprockets-rails", "~> 3.5"
+gem 'sprockets-rails', '~> 3.5'

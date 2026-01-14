@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module SpreeRedirections
-  class Redirection < ActiveRecord::Base
+  class Redirection < ApplicationRecord
     validates :http_status, :old_url, :new_url, :store_id, presence: true
     validate :correct_http_status
 
@@ -13,7 +15,7 @@ module SpreeRedirections
     private
 
     def correct_http_status
-      return if %w[301 302 303].include?(self.http_status)
+      return if %w[301 302 303].include?(http_status)
 
       errors.add(:base, I18n.t('spree.errors.invalid_http_status'))
     end

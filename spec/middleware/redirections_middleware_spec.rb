@@ -170,16 +170,17 @@ RSpec.describe RedirectionsMiddleware do
 
   describe '#capture_message' do
     let(:exception) { StandardError.new('boom') }
+    let(:env) { { 'SERVER_NAME' => 'verona.pl', 'QUERY_STRING' => 'example.com?arg=value' } }
 
     it 'sends exception to Sentry wrapped in RedirectionServiceError' do
-      middleware.capture_message(exception)
+      middleware.capture_message(exception, env)
 
       expect(Sentry).to have_received(:capture_exception).with(
         instance_of(RedirectionServiceError),
         hash_including(
           level: 'error',
           tags: { component: 'middleware', category: 'redirections' },
-          extra: hash_including(url: nil, store: nil) # @old_url_joined and @store are nil in this class
+          extra: hash_including(url: 'example.com?arg=value', server_name: 'verona.pl')
         )
       )
     end

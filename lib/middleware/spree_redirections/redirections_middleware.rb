@@ -23,15 +23,15 @@ class RedirectionsMiddleware
 
     [status, headers, body]
   rescue StandardError => e
-    capture_message(e)
+    capture_message(e, env)
     raise
   end
 
-  def capture_message(err)
+  def capture_message(err, env)
     Sentry.capture_exception(RedirectionServiceError.new(err&.full_message),
                              level: 'error',
                              tags: { component: 'middleware', category: 'redirections' },
-                             extra: { url: @old_url_joined, store: @store&.id })
+                             extra: { url: env['QUERY_STRING'], server_name: env['SERVER_NAME'] })
   end
 
   private

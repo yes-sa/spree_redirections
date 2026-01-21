@@ -1,24 +1,42 @@
 plugins:
   - rubocop-rails
+  - rubocop-rspec
 
 AllCops:
-  DisplayCopNames: true
-  TargetRubyVersion: 3.3
-  Include:
-    - '**/Gemfile'
-    - '**/Rakefile'
-    - '**/Appraisals'
+  NewCops: enable
+  TargetRubyVersion: 3.4
   Exclude:
-    - 'spec/dummy/**/*'
-    - 'lib/generators/**/*'
+    - spec/dummy/**/*
+    - lib/**
+    - bin/**
+    - config/**/*
+    - vendor/**/*
+    - Rakefile
 
 Layout/LineLength:
   Max: 150
 
-# DISABLED
-
 Style/Documentation:
   Enabled: false
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+RSpec/MultipleMemoizedHelpers:
+  Exclude:
+    - spec/**/*
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/**/*
+RSpec/ExampleLength:
+  Exclude:
+    - spec/**/*
+RSpec/NestedGroups:
+  Exclude:
+    - spec/**/*
+RSpec/ContextWording:
+  Exclude:
+    - spec/**/*
+Metrics/MethodLength:
+  Exclude:
+    - lib/middleware/spree_redirections/redirections_middleware.rb

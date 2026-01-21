@@ -20,6 +20,15 @@ This is a Redirections extension for [Spree Commerce](https://spreecommerce.org)
 
   If your server was running, restart it so that it can find the assets properly.
 
+4. Add to your application.rb:
+on top:
+```ruby
+require 'middleware/spree_redirections/redirections_middleware'
+```
+and in config:
+```ruby
+config.middleware.insert_after 0, RedirectionsMiddleware
+```
 ## Developing
 
 1. Create a dummy app
@@ -31,10 +40,15 @@ This is a Redirections extension for [Spree Commerce](https://spreecommerce.org)
 
 2. Add your new code
 3. Run tests
+Remember to generate dummy app first
+```shell
+   bundle exec rake test_app
+```
+then
 
-    ```bash
-    bundle exec rspec
-    ```
+```bash
+   bundle exec rspec
+```
 
 When testing your applications integration with this extension you may use it's factories.
 Simply add this require statement to your spec_helper:

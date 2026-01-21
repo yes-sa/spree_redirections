@@ -1,0 +1,8 @@
+---
+pl:
+  spree:
+    errors:
+      invalid_http_status: Niepoprawny status HTTP
+      store_not_found: Sklepu nie znaleziono
+    redirection:
+      redirecting: Przekierowanie...

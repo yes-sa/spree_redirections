@@ -17,6 +17,10 @@ module SpreeRedirections
       %w[id old_url new_url http_status external_redirection created_at updated_at deleted_at]
     end
 
+    def self.model_name
+      ActiveModel::Name.new(self, nil, 'Redirection')
+    end
+
     private
 
     def correct_http_status

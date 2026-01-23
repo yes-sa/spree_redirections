@@ -86,7 +86,13 @@
 
   <div class="form-actions mt-4">
     <%= f.submit class: 'btn btn-primary' %>
-    <%= link_to I18n.t('spree.redirection.cancel'), spree.admin_redirections_path, class: 'btn btn-outline-secondary' %>
-    <%= link_to_delete @redirection, class: 'btn btn-outline-primary' %>
+    <%= link_to I18n.t('spree.redirection.cancel'), spree.admin_redirections_path, class: 'btn btn-outline-primary' %>
+    <% unless @redirection.new_record? %>
+      <%= link_to Spree.t(:delete),
+                  spree.admin_redirection_path(@redirection),
+                  data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) },
+                  class: "btn btn-outline-primary" %>
+    <% end %>
+
   </div>
 <% end %>

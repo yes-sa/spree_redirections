@@ -6,7 +6,7 @@ module Spree
       private
 
       def permitted_resource_params
-        params.require(:redirection).permit(:store_url, :old_url, :new_url, :http_status, :external_redirection)
+        params.require(:redirection).permit(:id, :store_url, :old_url, :new_url, :http_status, :external_redirection)
       end
 
       protected

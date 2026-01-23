@@ -8,9 +8,7 @@ module SpreeRedirections
       @old_url = old_url
       @query_string = query_string
       @old_url_joined = [old_url, query_string].join('?').sub(%r{[/?\s]*$}, '').strip
-
-      debugger
-      @store_url = Rails.env.development? ? AppConfig.server_name_imitation : server_name
+      @store_url = Rails.env.development? ? ENV.fetch('SERVER_NAME_IMITATION', nil) : server_name
     end
 
     def call
@@ -23,7 +21,9 @@ module SpreeRedirections
     end
 
     def redirect
-      @redirect ||= SpreeRedirections::Redirection.find_by(old_url: @old_url_joined, store_url: @store_url)
+      return @redirect if defined?(@redirect)
+
+      @redirect = SpreeRedirections::Redirection.find_by(old_url: @old_url_joined, store_url: @store_url)
     end
   end
 end

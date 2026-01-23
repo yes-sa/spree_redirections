@@ -29,4 +29,10 @@ Rails.application.config.after_initialize do
 
   # Storefront partials
   Spree.storefront.partials.head << 'spree_redirections/head'
+  settings_nav = Spree.admin.navigation.settings
+  settings_nav.add :redirections,
+                   label: :redirections,
+                   url: -> { spree.admin_redirections_path },
+                   icon: 'arrow-loop-left',
+                   if: -> { can?(:manage, SpreeRedirections::Redirection) }
 end

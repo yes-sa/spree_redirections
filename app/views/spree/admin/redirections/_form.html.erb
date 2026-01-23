@@ -1,0 +1,92 @@
+<% form_url = @redirection.persisted? ? spree.admin_redirection_path(@redirection) : spree.admin_redirections_path %>
+
+<%= form_for @redirection, as: :redirection, url: form_url do |f| %>
+
+  <% if f.object.errors.any? %>
+    <div class="alert alert-danger">
+      <% if f.object.errors[:base].any? %>
+        <ul class="mb-2">
+          <% f.object.errors[:base].each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <ul class="mb-0">
+        <% f.object.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= f.label :store_url, I18n.t('spree.redirection.store_url'), class: 'form-label' %>
+
+        <%= f.select :store_url,
+                     Spree::Store.all.filter_map{ |store| store.custom_domains.pluck(:url)}.flatten,
+                     { include_blank: false },
+                     class: "form-control #{f.object.errors[:store_url].any? ? 'is-invalid' : ''}" %>
+
+        <% if f.object.errors[:store_url].any? %>
+          <div class="invalid-feedback d-block">
+            <%= f.object.errors[:store_url].first %>
+          </div>
+        <% end %>
+      </div>
+
+    </div>
+
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= f.label :http_status, I18n.t('spree.redirection.http_status'), class: 'form-label' %>
+        <%= f.select :http_status,
+                     options_for_select([['301','301'], ['302','302'], ['303','303']], f.object.http_status),
+                     {},
+                     class: "form-control #{f.object.errors[:http_status].any? ? 'is-invalid' : ''}" %>
+        <% if f.object.errors[:http_status].any? %>
+          <div class="invalid-feedback d-block"><%= f.object.errors[:http_status].first %></div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-1">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= f.label :old_url, I18n.t('spree.redirection.old_url'), class: 'form-label' %>
+        <%= f.text_field :old_url, class: "form-control #{f.object.errors[:old_url].any? ? 'is-invalid' : ''}" %>
+        <% if f.object.errors[:old_url].any? %>
+          <div class="invalid-feedback d-block"><%= f.object.errors[:old_url].first %></div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= f.label :new_url, I18n.t('spree.redirection.new_url'), class: 'form-label' %>
+        <%= f.text_field :new_url, class: "form-control #{f.object.errors[:new_url].any? ? 'is-invalid' : ''}" %>
+        <% if f.object.errors[:new_url].any? %>
+          <div class="invalid-feedback d-block"><%= f.object.errors[:new_url].first %></div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-1">
+    <div class="col-md-6">
+      <div class="form-check mb-3">
+        <%= f.check_box :external_redirection, class: 'form-check-input' %>
+        <%= f.label :external_redirection, I18n.t('spree.redirection.external_redirection'), class: 'form-check-label' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions mt-4">
+    <%= f.submit class: 'btn btn-primary' %>
+    <%= link_to I18n.t('spree.redirection.cancel'), spree.admin_redirections_path, class: 'btn btn-outline-secondary' %>
+    <%= link_to_delete @redirection, class: 'btn btn-outline-primary' %>
+  </div>
+<% end %>

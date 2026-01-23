@@ -5,4 +5,21 @@ en:
       invalid_http_status: Invalid HTTP status
       store_not_found: Store not found
     redirection:
+      redirections: Redirections
+      new_redirection: New Redirection
+      edit_redirection: Edit Redirection
+      store_url: Store URL
+      old_url: Old URL
+      new_url: New URL
+      http_status: HTTP Status
+      external_redirection: External Redirection
+      actions: Actions
+      created_at: Created At
+      deleted_at: Deleted At
+      cancel: Cancel
+      yess: Yes
+      nos: No
       redirecting: Redirecting...
+      errors:
+        invalid_http_status: Incorrect redirection HTTP status
+        store_not_found: Store with given URL does not exist

@@ -13,18 +13,22 @@ module SpreeRedirections
       update!(deleted_at: Time.current)
     end
 
+    def self.ransackable_attributes(_auth_object = nil)
+      %w[id old_url new_url http_status external_redirection created_at updated_at deleted_at]
+    end
+
     private
 
     def correct_http_status
       return if %w[301 302 303].include?(http_status)
 
-      errors.add(:base, I18n.t('spree.errors.invalid_http_status'))
+      errors.add(:http_status, I18n.t('spree.errors.invalid_http_status'))
     end
 
     def existing_store
-      return if Spree.current_store_finder(url: store_url).execute
+      return if Spree::CustomDomain.find_by(url: store_url).present?
 
-      errors.add(:base, I18n.t('spree.errors.store_not_found'))
+      errors.add(:store_url, I18n.t('spree.errors.store_not_found'))
     end
   end
 end

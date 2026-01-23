@@ -5,4 +5,21 @@ pl:
       invalid_http_status: Niepoprawny status HTTP
       store_not_found: Sklepu nie znaleziono
     redirection:
-      redirecting: Przekierowanie...
+      yess: Tak
+      nos: Nie
+      redirections: Przekierowania
+      new_redirection: Nowe przekierowanie
+      edit_redirection: Edytuj przekierowanie
+      store_url: Adres sklepu
+      old_url: Stary adres URL
+      new_url: Nowy adres URL
+      http_status: Status HTTP
+      external_redirection: Przekierowanie zewnętrzne
+      actions: Akcje
+      created_at: Utworzono
+      cancel: Anuluj
+      deleted_at: Usunięto
+      redirecting: Przekierowuję...
+      errors:
+        invalid_http_status: Niepoprawny status przekierowania
+        store_not_found: Sklep o podanym adresie URL nie istnieje

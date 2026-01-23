@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe SpreeRedirections::Redirection, type: :model do
   let(:valid_attributes) do
     {
-      store_url: 'store_url',
+      store_url: "www.example.com",
       old_url: '/old',
       new_url: '/new',
       http_status: '301',
@@ -15,7 +15,8 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
 
   let(:redirection) { described_class.new(valid_attributes) }
   let(:spree_store_finder) { instance_double(Spree::Stores::FindCurrent) }
-  let(:store) { create(:store, default: true) }
+  let!(:store) { create(:store, default: true) }
+  let!(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
 
   before do
     allow(Spree).to receive(:current_store_finder).and_return(spree_store_finder)
@@ -56,7 +57,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
             redirection.http_status = status
 
             expect(redirection).not_to be_valid
-            expect(redirection.errors[:base])
+            expect(redirection.errors[:http_status])
               .to include(I18n.t('spree.errors.invalid_http_status'))
           end
         end
@@ -79,7 +80,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
           redirection.store_url = 'not_exists'
 
           expect(redirection).not_to be_valid
-          expect(redirection.errors[:base])
+          expect(redirection.errors[:store_url])
             .to include(I18n.t('spree.errors.store_not_found'))
         end
       end
@@ -156,6 +157,25 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
 
       expect(described_class.all).not_to include(persisted_redirection)
       expect(described_class.with_archival).to include(persisted_redirection)
+    end
+  end
+
+  describe "ransackable_attributes" do
+    it "returns the allowed ransack attributes" do
+      expect(described_class.ransackable_attributes).to match_array(
+                                                          %w[
+          id old_url new_url http_status external_redirection
+          created_at updated_at deleted_at
+        ]
+                                                        )
+    end
+
+    it "does not depend on the auth object argument" do
+      expect(described_class.ransackable_attributes(nil))
+        .to match_array(described_class.ransackable_attributes)
+
+      expect(described_class.ransackable_attributes(double("auth")))
+        .to match_array(described_class.ransackable_attributes)
     end
   end
 end

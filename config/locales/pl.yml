@@ -12,6 +12,7 @@ pl:
       edit_redirection: Edytuj przekierowanie
       errors:
         invalid_http_status: Niepoprawny status przekierowania
+        invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
         store_not_found: Sklep o podanym adresie URL nie istnieje
       external_redirection: Przekierowanie zewnętrzne
       http_status: Status HTTP
@@ -22,4 +23,5 @@ pl:
       redirecting: Przekierowuję...
       redirections: Przekierowania
       store_url: Adres sklepu
+      success: Pomyślnie zapisane
       yess: Tak

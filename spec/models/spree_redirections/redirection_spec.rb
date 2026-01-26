@@ -86,6 +86,82 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
         end
       end
     end
+
+    context 'external_new_url_format validation' do
+      let(:error_message) { I18n.t('spree.redirection.errors.invalid_url') }
+
+      context 'when new_url is blank' do
+        it 'does not add errors from external_new_url_format (returns early)' do
+          redirection.external_redirection = true
+          redirection.new_url = ''
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).to be_present # presence validation
+          expect(redirection.errors[:new_url]).not_to include(error_message)
+        end
+      end
+
+      context 'when external_redirection is false' do
+        it 'does not validate the external url format' do
+          redirection.external_redirection = false
+          redirection.new_url = 'not-a-url'
+
+          expect(redirection).to be_valid
+          expect(redirection.errors[:new_url]).to be_blank
+        end
+      end
+
+      context 'when external_redirection is true' do
+        before { redirection.external_redirection = true }
+
+        context 'in development environment' do
+          before { allow(Rails.env).to receive(:development?).and_return(true) }
+
+          it 'is valid when new_url starts with http://www' do
+            redirection.new_url = 'http://www.example.com/path'
+
+            expect(redirection).to be_valid
+          end
+
+          it 'is valid when new_url starts with https://www' do
+            redirection.new_url = 'https://www.example.com/path'
+
+            expect(redirection).to be_valid
+          end
+
+          it 'is invalid when new_url does not start with http://www or https://www' do
+            redirection.new_url = 'https://example.com/path'
+
+            expect(redirection).not_to be_valid
+            expect(redirection.errors[:new_url]).to include(error_message)
+          end
+        end
+
+        context 'in non-development environment' do
+          before { allow(Rails.env).to receive(:development?).and_return(false) }
+
+          it 'is valid when new_url starts with https://www' do
+            redirection.new_url = 'https://www.example.com/path'
+
+            expect(redirection).to be_valid
+          end
+
+          it 'is invalid when new_url starts with http://www' do
+            redirection.new_url = 'http://www.example.com/path'
+
+            expect(redirection).not_to be_valid
+            expect(redirection.errors[:new_url]).to include(error_message)
+          end
+
+          it 'is invalid when new_url does not start with https://www' do
+            redirection.new_url = 'https://example.com/path'
+
+            expect(redirection).not_to be_valid
+            expect(redirection.errors[:new_url]).to include(error_message)
+          end
+        end
+      end
+    end
   end
 
   describe 'scopes' do

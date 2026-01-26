@@ -1,4 +1,4 @@
-<% form_url = @redirection.persisted? ? spree.admin_redirection_path(@redirection) : spree.admin_redirections_path %>
+<% form_url = spree.admin_redirections_path %>
 
 <%= form_for @redirection, as: :redirection, url: form_url do |f| %>
 

@@ -58,10 +58,11 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
       }.to raise_error(ActionController::ParameterMissing, /redirection/)
     end
   end
+
   describe '#create' do
     let!(:admin_user) { create(:admin_user) }
     let(:store) { create(:store, default: true, url: 'example.com') }
-    let!(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
+    let(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
 
     let(:valid_params) do
       {
@@ -76,14 +77,12 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
     end
 
     before do
+      custom_domain
       # Make Spree think we are logged in as an admin.
-      allow(controller).to receive(:spree_current_user).and_return(admin_user)
       allow(controller).to receive(:try_spree_current_user).and_return(admin_user) if controller.respond_to?(:try_spree_current_user)
 
       # Bypass authorization layers that may still run in before_actions.
-      allow(controller).to receive(:authorize_admin).and_return(true)
-      allow(controller).to receive(:spree_authorize!).and_return(true)
-      allow(controller).to receive(:authorize!).and_return(true)
+      allow(controller).to receive_messages(spree_current_user: admin_user, authorize_admin: true, spree_authorize!: true, authorize!: true)
     end
 
     context 'with valid parameters' do
@@ -99,7 +98,7 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
         expect(created.old_url).to eq('/old')
         expect(created.new_url).to eq('https://example.com')
         expect(created.http_status.to_s).to eq('301')
-        expect(created.external_redirection).to eq(false)
+        expect(created.external_redirection).to be(false)
       end
 
       it 'sets a success flash message' do
@@ -132,5 +131,4 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
       end
     end
   end
-
 end

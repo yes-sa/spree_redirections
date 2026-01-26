@@ -96,7 +96,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
           redirection.new_url = ''
 
           expect(redirection).not_to be_valid
-          expect(redirection.errors[:new_url]).to be_present # presence validation
+          expect(redirection.errors[:new_url]).to be_present
           expect(redirection.errors[:new_url]).not_to include(error_message)
         end
       end

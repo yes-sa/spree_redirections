@@ -78,10 +78,7 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
 
     before do
       custom_domain
-      # Make Spree think we are logged in as an admin.
       allow(controller).to receive(:try_spree_current_user).and_return(admin_user) if controller.respond_to?(:try_spree_current_user)
-
-      # Bypass authorization layers that may still run in before_actions.
       allow(controller).to receive_messages(spree_current_user: admin_user, authorize_admin: true, spree_authorize!: true, authorize!: true)
     end
 

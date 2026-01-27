@@ -56,6 +56,7 @@ Simply add this require statement to your spec_helper:
 ```ruby
 require 'spree_redirections/factories'
 ```
+4. To test manually run server in development mode and set SERVER_NAME_IMITATION env variable to mock your store server name 
 
 ## Releasing a new version
 

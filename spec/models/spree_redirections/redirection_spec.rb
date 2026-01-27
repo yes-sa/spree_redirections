@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe SpreeRedirections::Redirection, type: :model do
   let(:valid_attributes) do
     {
-      store_url: 'store_url',
+      store_url: 'www.example.com',
       old_url: '/old',
       new_url: '/new',
       http_status: '301',
@@ -16,8 +16,10 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
   let(:redirection) { described_class.new(valid_attributes) }
   let(:spree_store_finder) { instance_double(Spree::Stores::FindCurrent) }
   let(:store) { create(:store, default: true) }
+  let(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
 
   before do
+    custom_domain
     allow(Spree).to receive(:current_store_finder).and_return(spree_store_finder)
     allow(spree_store_finder).to receive(:execute).and_return(store)
   end
@@ -56,7 +58,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
             redirection.http_status = status
 
             expect(redirection).not_to be_valid
-            expect(redirection.errors[:base])
+            expect(redirection.errors[:http_status])
               .to include(I18n.t('spree.errors.invalid_http_status'))
           end
         end
@@ -79,8 +81,84 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
           redirection.store_url = 'not_exists'
 
           expect(redirection).not_to be_valid
-          expect(redirection.errors[:base])
+          expect(redirection.errors[:store_url])
             .to include(I18n.t('spree.errors.store_not_found'))
+        end
+      end
+    end
+
+    context 'external_new_url_format validation' do
+      let(:error_message) { I18n.t('spree.redirection.errors.invalid_url') }
+
+      context 'when new_url is blank' do
+        it 'does not add errors from external_new_url_format (returns early)' do
+          redirection.external_redirection = true
+          redirection.new_url = ''
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).to be_present
+          expect(redirection.errors[:new_url]).not_to include(error_message)
+        end
+      end
+
+      context 'when external_redirection is false' do
+        it 'does not validate the external url format' do
+          redirection.external_redirection = false
+          redirection.new_url = 'not-a-url'
+
+          expect(redirection).to be_valid
+          expect(redirection.errors[:new_url]).to be_blank
+        end
+      end
+
+      context 'when external_redirection is true' do
+        before { redirection.external_redirection = true }
+
+        context 'in development environment' do
+          before { allow(Rails.env).to receive(:development?).and_return(true) }
+
+          it 'is valid when new_url starts with http://www' do
+            redirection.new_url = 'http://www.example.com/path'
+
+            expect(redirection).to be_valid
+          end
+
+          it 'is valid when new_url starts with https://www' do
+            redirection.new_url = 'https://www.example.com/path'
+
+            expect(redirection).to be_valid
+          end
+
+          it 'is invalid when new_url does not start with http://www or https://www' do
+            redirection.new_url = 'https://example.com/path'
+
+            expect(redirection).not_to be_valid
+            expect(redirection.errors[:new_url]).to include(error_message)
+          end
+        end
+
+        context 'in non-development environment' do
+          before { allow(Rails.env).to receive(:development?).and_return(false) }
+
+          it 'is valid when new_url starts with https://www' do
+            redirection.new_url = 'https://www.example.com/path'
+
+            expect(redirection).to be_valid
+          end
+
+          it 'is invalid when new_url starts with http://www' do
+            redirection.new_url = 'http://www.example.com/path'
+
+            expect(redirection).not_to be_valid
+            expect(redirection.errors[:new_url]).to include(error_message)
+          end
+
+          it 'is invalid when new_url does not start with https://www' do
+            redirection.new_url = 'https://example.com/path'
+
+            expect(redirection).not_to be_valid
+            expect(redirection.errors[:new_url]).to include(error_message)
+          end
         end
       end
     end
@@ -156,6 +234,25 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
 
       expect(described_class.all).not_to include(persisted_redirection)
       expect(described_class.with_archival).to include(persisted_redirection)
+    end
+  end
+
+  describe 'ransackable_attributes' do
+    it 'returns the allowed ransack attributes' do
+      expect(described_class.ransackable_attributes).to match_array(
+        %w[
+          id old_url new_url http_status external_redirection
+          created_at updated_at deleted_at
+        ]
+      )
+    end
+
+    it 'does not depend on the auth object argument' do
+      expect(described_class.ransackable_attributes(nil))
+        .to match_array(described_class.ransackable_attributes)
+
+      expect(described_class.ransackable_attributes(['auth']))
+        .to match_array(described_class.ransackable_attributes)
     end
   end
 end

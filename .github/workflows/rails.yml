@@ -1,0 +1,28 @@
+name: Rails
+
+on:
+  push:
+    branches:
+      - develop
+      - staging
+      - master
+  pull_request:  # No branches specified = all PRs
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true 
+
+jobs:
+  linter:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4.4
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: bundle exec rubocop

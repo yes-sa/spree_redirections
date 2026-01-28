@@ -13,6 +13,8 @@ pl:
       errors:
         invalid_http_status: Niepoprawny status przekierowania
         invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
+        redirection_to_admin: Przekierowanie nie może kierować na/z admina
+        relative_old_url: Ścieżka początkowa może być tylko relacyjna (np. /produkty/pierścionki)
         store_not_found: Sklep o podanym adresie URL nie istnieje
       external_redirection: Przekierowanie zewnętrzne
       http_status: Status HTTP

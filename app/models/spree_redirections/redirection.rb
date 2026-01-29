@@ -8,14 +8,14 @@ module SpreeRedirections
     validate :external_new_url_format
 
     default_scope -> { where(deleted_at: nil).order(created_at: :desc) }
-    scope :with_archival, -> { unscoped }
+    scope :with_archival, -> { unscoped.where.not(deleted_at: nil).order(deleted_at: :desc) }
 
-    def destroy
-      update!(deleted_at: Time.current)
+    def destroy(current_user:)
+      update!(deleted_at: Time.current, deleted_by: current_user)
     end
 
     def self.ransackable_attributes(_auth_object = nil)
-      %w[id old_url new_url http_status external_redirection created_at updated_at deleted_at]
+      %w[id old_url new_url http_status external_redirection created_at created_by updated_at deleted_at deleted_by]
     end
 
     def self.model_name

@@ -14,14 +14,11 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
   end
 
   let(:redirection) { described_class.new(valid_attributes) }
-  let(:spree_store_finder) { instance_double(Spree::Stores::FindCurrent) }
   let(:store) { create(:store, default: true) }
   let(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
 
   before do
     custom_domain
-    allow(Spree).to receive(:current_store_finder).and_return(spree_store_finder)
-    allow(spree_store_finder).to receive(:execute).and_return(store)
   end
 
   describe 'validations' do
@@ -73,10 +70,6 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
       end
 
       context 'with not existing store_url' do
-        before do
-          allow(spree_store_finder).to receive(:execute).and_return(nil)
-        end
-
         it 'is not valid' do
           redirection.store_url = 'not_exists'
 
@@ -194,14 +187,9 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     end
 
     describe '.with_archival' do
-      it 'returns both deleted and non-deleted records' do
-        expect(described_class.with_archival)
-          .to include(active_redirection, deleted_redirection)
-      end
-
-      it 'removes default ordering' do
+      it 'returns only removed records' do
         records = described_class.with_archival.to_a
-        expect(records).to contain_exactly(active_redirection, deleted_redirection)
+        expect(records).to contain_exactly(deleted_redirection)
       end
     end
   end
@@ -210,18 +198,19 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     let!(:persisted_redirection) do
       described_class.create!(valid_attributes)
     end
+    let(:user_full_name) { 'John Doe'}
 
     it 'does not remove the record from the database' do
       expect {
-        persisted_redirection.destroy
-      }.not_to(change { described_class.with_archival.count })
+        persisted_redirection.destroy(current_user: user_full_name)
+      }.to(change { described_class.with_archival.count })
     end
 
     it 'sets deleted_at timestamp' do
       freeze_time do
         now = Time.current
 
-        persisted_redirection.destroy
+        persisted_redirection.destroy(current_user: user_full_name)
         persisted_redirection.reload
 
         expect(persisted_redirection.deleted_at)
@@ -230,7 +219,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     end
 
     it 'removes the record from the default scope' do
-      persisted_redirection.destroy
+      persisted_redirection.destroy(current_user: user_full_name)
 
       expect(described_class.all).not_to include(persisted_redirection)
       expect(described_class.with_archival).to include(persisted_redirection)
@@ -242,7 +231,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
       expect(described_class.ransackable_attributes).to match_array(
         %w[
           id old_url new_url http_status external_redirection
-          created_at updated_at deleted_at
+          created_at created_by updated_at deleted_at deleted_by
         ]
       )
     end

@@ -198,7 +198,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     let!(:persisted_redirection) do
       described_class.create!(valid_attributes)
     end
-    let(:user_full_name) { 'John Doe'}
+    let(:user_full_name) { 'John Doe' }
 
     it 'does not remove the record from the database' do
       expect {

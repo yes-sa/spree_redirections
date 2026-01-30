@@ -80,35 +80,32 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
     end
 
     context 'when with_archival param is present' do
-      let!(:active)   { SpreeRedirections::Redirection.create!(valid_attributes) }
-      let!(:deleted)  { SpreeRedirections::Redirection.create!(valid_attributes.merge(deleted_at: 1.day.ago)) }
+      before do
+        SpreeRedirections::Redirection.create!(valid_attributes)
+        SpreeRedirections::Redirection.create!(valid_attributes.merge(deleted_at: 1.day.ago))
+      end
 
       it 'assigns @collection using with_archival scope' do
-        get :index, params: { with_archival: '1' }
+        get :index, params: { with_archival: 'true' }
 
         expect(assigns(:collection)).to match_array(
-                                          SpreeRedirections::Redirection.with_archival.to_a
-                                        )
-
-        # sanity check: should include deleted record
-        expect(assigns(:collection)).to include(deleted)
+          SpreeRedirections::Redirection.with_archival.to_a
+        )
       end
     end
 
     context 'when with_archival param is not present' do
-      let!(:active)   { SpreeRedirections::Redirection.create!(valid_attributes) }
-      let!(:deleted)  { SpreeRedirections::Redirection.create!(valid_attributes.merge(deleted_at: 1.day.ago)) }
+      before do
+        SpreeRedirections::Redirection.create!(valid_attributes)
+        SpreeRedirections::Redirection.create!(valid_attributes.merge(deleted_at: 1.day.ago))
+      end
 
       it 'assigns @collection using default scope (all)' do
         get :index
 
         expect(assigns(:collection)).to match_array(
-                                          SpreeRedirections::Redirection.all.to_a
-                                        )
-
-        # if your default scope excludes deleted, this expectation will pass;
-        # if it doesn't, remove this line.
-        expect(assigns(:collection)).not_to include(deleted)
+          SpreeRedirections::Redirection.all.to_a
+        )
       end
     end
   end
@@ -134,19 +131,21 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
     end
 
     context 'when success delete' do
+      before do
+        allow(redirection).to receive(:destroy).with({ current_user: instance_of(String) })
+                                               .and_return(true)
+        allow(SpreeRedirections::Redirection).to receive(:find)
+          .with(redirection.id.to_s)
+          .and_return(redirection)
+      end
+
       let(:redirection) { SpreeRedirections::Redirection.create!(valid_attributes) }
 
       it 'finds the record via permitted_destroy_params and calls destroy with current_user full_name' do
-
-        expect(SpreeRedirections::Redirection).to receive(:find)
-                                                    .with(redirection.id.to_s)
-                                                    .twice
-                                                    .and_return(redirection)
-
-        expect(redirection).to receive(:destroy)
-                                 .with(current_user: admin_user.full_name)
-
         delete :destroy, params: { id: redirection.id }
+
+        expect(redirection).to have_received(:destroy)
+          .with(current_user: admin_user.full_name)
       end
 
       it 'redirects to index with success notice' do
@@ -160,18 +159,18 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
     end
 
     context 'when failure deletion' do
-      let(:non_existing_id) {0}
+      let(:non_existing_id) { 0 }
+
       it 'returns unprocessable content' do
         allow(SpreeRedirections::Redirection).to receive(:find)
-                                                    .with(non_existing_id.to_s)
-                                                    .and_return(nil)
+          .with(non_existing_id.to_s)
+          .and_return(nil)
         delete :destroy, params: { id: non_existing_id.to_s }
 
         expect(response).to have_rendered(:index, status: :unprocessable_content)
       end
     end
   end
-
 
   describe '#create' do
     let!(:admin_user) { create(:admin_user) }

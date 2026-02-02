@@ -13,7 +13,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     }
   end
 
-  let(:redirection) { described_class.new(valid_attributes) }
+  let(:redirection) { create(:redirection, **valid_attributes) }
   let(:store) { create(:store, default: true) }
   let(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
 
@@ -38,6 +38,27 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
         end
       end
     end
+
+    context 'old_url uniqueness validation' do
+      context 'with unique store_url/old_url pair' do
+        let(:another_redirection) {create(:redirection, store_url: store.url, old_url: redirection.old_url + '/different')}
+
+        it 'is valid' do
+          expect(another_redirection).to be_valid
+        end
+      end
+
+      context 'with duplicated store_url/old_url pair' do
+        let(:duplicate_redirection) { create(:redirection, store_url: store.url) }
+        it 'is not valid' do
+          duplicate_redirection.old_url = redirection.old_url
+          expect(duplicate_redirection).not_to be_valid
+          expect(duplicate_redirection.errors[:old_url])
+            .to include(I18n.t('spree.redirection.errors.uniqueness_for_store_url'))
+        end
+      end
+    end
+
 
     context 'http_status validation' do
       context 'with allowed values' do
@@ -155,6 +176,8 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
         end
       end
     end
+
+
   end
 
   describe 'scopes' do

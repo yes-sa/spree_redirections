@@ -23,7 +23,7 @@ group :test do
   spree_opts = '~> 5.2'
   gem 'abbrev'
   gem 'factory_bot_rails'
-  gem 'ffaker'
+  gem 'faker'
   gem 'observer'
   gem 'rails-controller-testing'
   gem 'spree', spree_opts

@@ -60,15 +60,6 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
   end
 
   describe '#index' do
-    let(:valid_attributes) do
-      {
-        store_url: 'www.example.com',
-        old_url: '/old',
-        new_url: '/new',
-        http_status: '301',
-        external_redirection: false
-      }
-    end
     let!(:admin_user) { create(:admin_user) }
     let(:store) { create(:store, default: true, url: 'www.example.com') }
     let(:custom_domain) { create(:custom_domain, store: store, url: 'www.example.com') }
@@ -81,8 +72,8 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
 
     context 'when with_archival param is present' do
       before do
-        SpreeRedirections::Redirection.create!(valid_attributes)
-        SpreeRedirections::Redirection.create!(valid_attributes.merge(deleted_at: 1.day.ago))
+        create(:redirection, store_url: store.url)
+        create(:redirection, :soft_deleted, store_url: store.url)
       end
 
       it 'assigns @collection using with_archival scope' do
@@ -96,8 +87,8 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
 
     context 'when with_archival param is not present' do
       before do
-        SpreeRedirections::Redirection.create!(valid_attributes)
-        SpreeRedirections::Redirection.create!(valid_attributes.merge(deleted_at: 1.day.ago))
+        create(:redirection, store_url: store.url)
+        create(:redirection, :soft_deleted, store_url: store.url)
       end
 
       it 'assigns @collection using default scope (all)' do

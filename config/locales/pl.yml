@@ -16,6 +16,8 @@ pl:
         invalid_http_status: Niepoprawny status przekierowania
         invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
         store_not_found: Sklep o podanym adresie URL nie istnieje
+        uniqueness_for_store_url: Przekierowanie istnieje dla tego old_url dla tego
+          sklepu
       external_redirection: Przekierowanie zewnętrzne
       http_status: Status HTTP
       new_redirection: Nowe przekierowanie

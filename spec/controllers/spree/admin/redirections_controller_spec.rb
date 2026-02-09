@@ -163,12 +163,12 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
 
       before do
         allow(redirection).to receive(:destroy)
-                                .with(current_user: instance_of(String))
-                                .and_return(false)
+          .with(current_user: instance_of(String))
+          .and_return(false)
 
         allow(SpreeRedirections::Redirection).to receive(:find)
-                                                   .with(redirection.id.to_s)
-                                                   .and_return(redirection)
+          .with(redirection.id.to_s)
+          .and_return(redirection)
       end
 
       it 'redirects to index with alert' do
@@ -182,7 +182,7 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
         delete :destroy, params: { id: redirection.id }
 
         expect(redirection).to have_received(:destroy)
-                                 .with(current_user: admin_user.full_name)
+          .with(current_user: admin_user.full_name)
       end
     end
   end

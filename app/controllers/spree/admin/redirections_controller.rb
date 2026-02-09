@@ -35,8 +35,8 @@ module Spree
       private
 
       def permitted_resource_params
-        params.require(:redirection).permit(
-          :id, :store_url, :old_url, :new_url, :http_status, :external_redirection, :created_by
+        params.expect(
+          redirection: %i[id store_url old_url new_url http_status external_redirection created_by]
         )
       end
 

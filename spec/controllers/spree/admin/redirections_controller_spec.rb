@@ -158,16 +158,31 @@ RSpec.describe Spree::Admin::RedirectionsController, type: :controller do
       end
     end
 
-    context 'when failure deletion' do
-      let(:non_existing_id) { 0 }
+    context 'when delete fails' do
+      let(:redirection) { SpreeRedirections::Redirection.create!(valid_attributes) }
 
-      it 'returns unprocessable content' do
+      before do
+        allow(redirection).to receive(:destroy)
+                                .with(current_user: instance_of(String))
+                                .and_return(false)
+
         allow(SpreeRedirections::Redirection).to receive(:find)
-          .with(non_existing_id.to_s)
-          .and_return(nil)
-        delete :destroy, params: { id: non_existing_id.to_s }
+                                                   .with(redirection.id.to_s)
+                                                   .and_return(redirection)
+      end
 
-        expect(response).to have_rendered(:index, status: :unprocessable_content)
+      it 'redirects to index with alert' do
+        delete :destroy, params: { id: redirection.id }
+
+        expect(response).to redirect_to(spree.admin_redirections_path)
+        expect(flash[:alert]).to eq(I18n.t('spree.redirection.errors.destroy_failed'))
+      end
+
+      it 'still calls destroy with current_user full_name' do
+        delete :destroy, params: { id: redirection.id }
+
+        expect(redirection).to have_received(:destroy)
+                                 .with(current_user: admin_user.full_name)
       end
     end
   end

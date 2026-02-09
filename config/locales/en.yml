@@ -13,6 +13,7 @@ en:
       deleted_at: Deleted At
       deleted_by: Deleted By
       errors:
+        destroy_failed: Deletion did not succeed
         invalid_http_status: Incorrect redirection HTTP status
         invalid_url: Must start with https:// and end with .www'
         store_not_found: Store with given URL does not exist

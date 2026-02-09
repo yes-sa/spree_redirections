@@ -13,6 +13,7 @@ pl:
       deleted_at: Usunięto
       deleted_by: Usunięto Przez
       errors:
+        destroy_failed: Nie udało się usunąć
         invalid_http_status: Niepoprawny status przekierowania
         invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
         store_not_found: Sklep o podanym adresie URL nie istnieje

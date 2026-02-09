@@ -200,29 +200,42 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     end
     let(:user_full_name) { 'John Doe' }
 
-    it 'does not remove the record from the database' do
-      expect {
+    context 'when soft deleted' do
+      it 'does not remove the record from the database' do
+        expect {
+          persisted_redirection.destroy(current_user: user_full_name)
+        }.to(change { described_class.with_archival.count })
+      end
+
+      it 'sets deleted_at timestamp' do
+        freeze_time do
+          persisted_redirection.destroy(current_user: user_full_name)
+          persisted_redirection.reload
+
+          expect(persisted_redirection.deleted_at)
+            .to eq(Time.current)
+        end
+      end
+
+      it 'removes the record from the default scope' do
         persisted_redirection.destroy(current_user: user_full_name)
-      }.to(change { described_class.with_archival.count })
-    end
 
-    it 'sets deleted_at timestamp' do
-      freeze_time do
-        now = Time.current
-
-        persisted_redirection.destroy(current_user: user_full_name)
-        persisted_redirection.reload
-
-        expect(persisted_redirection.deleted_at)
-          .to be_within(1.second).of(now)
+        expect(described_class.all).not_to include(persisted_redirection)
+        expect(described_class.with_archival).to include(persisted_redirection)
       end
     end
 
-    it 'removes the record from the default scope' do
-      persisted_redirection.destroy(current_user: user_full_name)
+    context 'when soft delete is not successful' do
+      before do
+        allow(persisted_redirection).to receive(:update).and_return(false)
+      end
 
-      expect(described_class.all).not_to include(persisted_redirection)
-      expect(described_class.with_archival).to include(persisted_redirection)
+      it 'does not set deleted_at when the update fails' do
+        persisted_redirection.destroy(current_user: user_full_name)
+        persisted_redirection.reload
+
+        expect(persisted_redirection.deleted_at).to be_nil
+      end
     end
   end
 

@@ -13,8 +13,11 @@ pl:
       deleted_at: Usunięto
       deleted_by: Usunięto Przez
       errors:
+        destroy_failed: Nie udało się usunąć
         invalid_http_status: Niepoprawny status przekierowania
         invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
+        redirection_to_admin: Przekierowanie nie może kierować na/z admina
+        relative_old_url: Ścieżka początkowa może być tylko relacyjna (np. /produkty/pierścionki)
         store_not_found: Sklep o podanym adresie URL nie istnieje
         uniqueness_for_store_url: Przekierowanie istnieje dla tego old_url dla tego
           sklepu

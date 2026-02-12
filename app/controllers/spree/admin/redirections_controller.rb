@@ -25,19 +25,18 @@ module Spree
 
       def destroy
         @redirection = ::SpreeRedirections::Redirection.find(permitted_destroy_params[:id])
-        if @redirection.present?
-          @redirection.destroy(current_user: try_spree_current_user.full_name)
+        if @redirection.present? && @redirection.destroy(current_user: try_spree_current_user.full_name)
           redirect_to spree.admin_redirections_path, notice: I18n.t('spree.redirection.success')
         else
-          render :index, status: :unprocessable_content
+          redirect_to spree.admin_redirections_path, alert: I18n.t('spree.redirection.errors.destroy_failed')
         end
       end
 
       private
 
       def permitted_resource_params
-        params.require(:redirection).permit(
-          :id, :store_url, :old_url, :new_url, :http_status, :external_redirection, :created_by
+        params.expect(
+          redirection: %i[id store_url old_url new_url http_status external_redirection created_by]
         )
       end
 

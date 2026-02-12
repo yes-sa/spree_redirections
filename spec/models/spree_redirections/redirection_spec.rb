@@ -176,6 +176,62 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
         end
       end
     end
+
+    context 'not_admin_redirection validation' do
+      let(:error_message) { I18n.t('spree.redirection.errors.redirection_to_admin') }
+
+      context 'with correct urls' do
+        it 'is valid' do
+          expect(redirection).to be_valid
+        end
+      end
+
+      context 'with old_url to admin site' do
+        before { valid_attributes['old_url'] = '/something/admin/something' }
+
+        it 'is invalid' do
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:base]).to include(error_message)
+        end
+      end
+
+      context 'with new_url to admin site' do
+        before { valid_attributes['new_url'] = 'www.example.com/something/admin/something' }
+
+        it 'is invalid' do
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:base]).to include(error_message)
+        end
+      end
+    end
+
+    context 'old_url format validation' do
+      let(:error_message) { I18n.t('spree.redirection.errors.relative_old_url') }
+
+      context 'with correct old_url format' do
+        it 'is valid' do
+          expect(redirection).to be_valid
+        end
+      end
+
+      context 'with external site old_url' do
+        before { valid_attributes['old_url'] = 'www.example.com/something/something' }
+
+        it 'is invalid' do
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:old_url]).to include(error_message)
+        end
+      end
+
+      context 'with invalid beggining' do
+        before { valid_attributes['old_url'] = 'something/something' }
+
+        it 'is invalid' do
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:old_url]).to include(error_message)
+        end
+      end
+    end
   end
 
   describe 'scopes' do
@@ -221,29 +277,42 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     end
     let(:user_full_name) { 'John Doe' }
 
-    it 'does not remove the record from the database' do
-      expect {
+    context 'when soft deleted' do
+      it 'does not remove the record from the database' do
+        expect {
+          persisted_redirection.destroy(current_user: user_full_name)
+        }.to(change { described_class.with_archival.count })
+      end
+
+      it 'sets deleted_at timestamp' do
+        freeze_time do
+          persisted_redirection.destroy(current_user: user_full_name)
+          persisted_redirection.reload
+
+          expect(persisted_redirection.deleted_at)
+            .to eq(Time.current)
+        end
+      end
+
+      it 'removes the record from the default scope' do
         persisted_redirection.destroy(current_user: user_full_name)
-      }.to(change { described_class.with_archival.count })
-    end
 
-    it 'sets deleted_at timestamp' do
-      freeze_time do
-        now = Time.current
-
-        persisted_redirection.destroy(current_user: user_full_name)
-        persisted_redirection.reload
-
-        expect(persisted_redirection.deleted_at)
-          .to be_within(1.second).of(now)
+        expect(described_class.all).not_to include(persisted_redirection)
+        expect(described_class.with_archival).to include(persisted_redirection)
       end
     end
 
-    it 'removes the record from the default scope' do
-      persisted_redirection.destroy(current_user: user_full_name)
+    context 'when soft delete is not successful' do
+      before do
+        allow(persisted_redirection).to receive(:update).and_return(false)
+      end
 
-      expect(described_class.all).not_to include(persisted_redirection)
-      expect(described_class.with_archival).to include(persisted_redirection)
+      it 'does not set deleted_at when the update fails' do
+        persisted_redirection.destroy(current_user: user_full_name)
+        persisted_redirection.reload
+
+        expect(persisted_redirection.deleted_at).to be_nil
+      end
     end
   end
 

@@ -6,11 +6,14 @@ en:
       store_not_found: Store not found
     redirection:
       actions: Actions
+      active_scope: Active/Removed
       cancel: Cancel
       created_at: Created At
+      created_by: Created By
       deleted_at: Deleted At
-      edit_redirection: Edit Redirection
+      deleted_by: Deleted By
       errors:
+        destroy_failed: Deletion did not succeed
         invalid_http_status: Incorrect redirection HTTP status
         invalid_url: Must start with https:// and end with .www'
         redirection_to_admin: Redirection must not target admin site

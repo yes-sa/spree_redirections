@@ -6,11 +6,14 @@ pl:
       store_not_found: Sklepu nie znaleziono
     redirection:
       actions: Akcje
+      active_scope: Aktywne/Usunięte
       cancel: Anuluj
       created_at: Utworzono
+      created_by: Utworzono Przez
       deleted_at: Usunięto
-      edit_redirection: Edytuj przekierowanie
+      deleted_by: Usunięto Przez
       errors:
+        destroy_failed: Nie udało się usunąć
         invalid_http_status: Niepoprawny status przekierowania
         invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
         redirection_to_admin: Przekierowanie nie może kierować na/z admina

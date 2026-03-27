@@ -64,7 +64,8 @@ module SpreeRedirections
     def not_admin_redirection
       return unless /admin/i.match?(old_url) || /admin/i.match?(new_url)
 
-      errors.add(:base, I18n.t('spree.redirection.errors.redirection_to_admin'))
+      errors.add(:old_url, I18n.t('spree.redirection.errors.redirection_to_admin')) if /admin/i.match?(old_url)
+      errors.add(:new_url, I18n.t('spree.redirection.errors.redirection_to_admin')) if /admin/i.match?(new_url)
     end
   end
 end

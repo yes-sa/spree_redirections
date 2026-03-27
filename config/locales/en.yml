@@ -6,7 +6,7 @@ en:
       store_not_found: Store not found
     redirection:
       actions: Actions
-      active_scope: Active/Removed
+      active_scope: Show Deleted
       cancel: Cancel
       created_at: Created At
       created_by: Created By
@@ -19,6 +19,8 @@ en:
         redirection_to_admin: Redirection must not target admin site
         relative_old_url: Must be a relative path only (e.g. /products/rings)
         store_not_found: Store with given URL does not exist
+        store_url_hint: If you test on development, make sure you created Custom Domain
+          first! It's purified on every run!
         uniqueness_for_store_url: Redirection for this old_url/store_url pair already
           exists
       external_redirection: External Redirection

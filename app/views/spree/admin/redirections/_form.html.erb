@@ -29,6 +29,11 @@
                      Spree::Store.all.filter_map{ |store| store.custom_domains.pluck(:url)}.flatten,
                      { include_blank: false },
                      class: "form-control #{f.object.errors[:store_url].any? ? 'is-invalid' : ''}" %>
+        <% if Rails.env.development? %>
+          <small class="form-text text-muted">
+            <%= I18n.t('spree.redirection.errors.store_url_hint') %>
+          </small>
+        <% end %>
 
         <% if f.object.errors[:store_url].any? %>
           <div class="invalid-feedback d-block">

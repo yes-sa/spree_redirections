@@ -6,7 +6,7 @@ pl:
       store_not_found: Sklepu nie znaleziono
     redirection:
       actions: Akcje
-      active_scope: Aktywne/Usunięte
+      active_scope: Pokaż usunięte
       cancel: Anuluj
       created_at: Utworzono
       created_by: Utworzono Przez
@@ -19,6 +19,8 @@ pl:
         redirection_to_admin: Przekierowanie nie może kierować na/z admina
         relative_old_url: Ścieżka początkowa może być tylko relacyjna (np. /produkty/pierścionki)
         store_not_found: Sklep o podanym adresie URL nie istnieje
+        store_url_hint: If you test on development, make sure you created Custom Domain
+          first! It's purified on every run!
         uniqueness_for_store_url: Przekierowanie istnieje dla tego old_url dla tego
           sklepu
       external_redirection: Przekierowanie zewnętrzne

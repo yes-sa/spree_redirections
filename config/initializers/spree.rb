@@ -26,13 +26,4 @@ Rails.application.config.after_initialize do
   # Spree.page_builder.theme_layout_sections << Spree::PageSections::SuperImportantCeoBio
   # Spree.page_builder.page_sections << Spree::PageSections::ContactFormToGetInTouch
   # Spree.page_builder.page_blocks << Spree::PageBlocks::BigRedButtonToCallSales
-
-  # Storefront partials
-  Spree.storefront.partials.head << 'spree_redirections/head'
-  settings_nav = Spree.admin.navigation.settings
-  settings_nav.add :redirections,
-                   label: :redirections,
-                   url: -> { spree.admin_redirections_path },
-                   icon: 'arrow-loop-left',
-                   if: -> { can?(:manage, SpreeRedirections::Redirection) }
 end

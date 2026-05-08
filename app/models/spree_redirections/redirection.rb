@@ -13,7 +13,7 @@ module SpreeRedirections
                 message: I18n.t('spree.redirection.errors.relative_old_url')
               }
     validate :correct_http_status
-    validate :existing_store
+    # validate :existing_store
     validate :external_new_url_format
     validate :not_admin_redirection
 

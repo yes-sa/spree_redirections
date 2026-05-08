@@ -8,7 +8,7 @@ module SpreeRedirections
       @old_url = old_url
       @query_string = query_string
       @old_url_joined = [old_url, query_string].join('?').sub(%r{[/?\s]*$}, '').strip
-      @store_url = Rails.env.development? ? ENV.fetch('SERVER_NAME_IMITATION', nil) : server_name
+      @store_url = Rails.env.development? ? ENV.fetch('FRONT_URL', nil) : server_name
     end
 
     def call

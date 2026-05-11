@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SpreeRedirections
   module Spree
     module ProductDecorator
@@ -9,14 +11,14 @@ module SpreeRedirections
       private
 
       def redirect_from_destroyed_product
-        taxon_permalink = taxons.order(:lft).filter_map{ |x| x.permalink}.last
+        taxon_permalink = taxons.order(:lft).filter_map(&:permalink).last
         return if slug.nil? || taxon_permalink.nil?
 
         create_redirection(taxon_permalink)
       end
 
       def redirect_from_old_slug
-        taxon_permalink = taxons.order(:lft).filter_map{ |x| x.permalink}.last
+        taxon_permalink = taxons.order(:lft).filter_map(&:permalink).last
         return unless slug.changed?
         return if slug.nil? || taxon_permalink.nil?
 
@@ -24,9 +26,9 @@ module SpreeRedirections
       end
 
       def create_redirection(taxon_permalink)
-        old_url = "/#{I18n.locale.to_s}/p/#{slug}"
-        new_url = "/#{I18n.locale.to_s}/t/#{taxon_permalink}"
-        store_url = ENV['FRONT_URL']
+        old_url = "/#{I18n.locale}/p/#{slug}"
+        new_url = "/#{I18n.locale}/t/#{taxon_permalink}"
+        store_url = ENV.fetch('FRONT_URL', nil)
         redirection = ::SpreeRedirections::Redirection.new(
           store_url:,
           old_url:,

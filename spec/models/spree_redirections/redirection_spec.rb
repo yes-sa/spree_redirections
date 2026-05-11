@@ -82,7 +82,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
         end
       end
     end
-    
+
     context 'external_new_url_format validation' do
       let(:error_message) { I18n.t('spree.redirection.errors.invalid_url') }
 

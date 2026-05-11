@@ -82,25 +82,7 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
         end
       end
     end
-
-    context 'existing_store validation' do
-      context 'with correct store_url' do
-        it 'is valid' do
-          expect(redirection).to be_valid
-        end
-      end
-
-      context 'with not existing store_url' do
-        it 'is not valid' do
-          redirection.store_url = 'not_exists'
-
-          expect(redirection).not_to be_valid
-          expect(redirection.errors[:store_url])
-            .to include(I18n.t('spree.errors.store_not_found'))
-        end
-      end
-    end
-
+    
     context 'external_new_url_format validation' do
       let(:error_message) { I18n.t('spree.redirection.errors.invalid_url') }
 

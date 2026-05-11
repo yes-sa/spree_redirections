@@ -4,7 +4,7 @@ module SpreeRedirections
   class RedirectionService
     class RedirectionServiceError < StandardError; end
 
-    def initialize(old_url, query_string = '', server_name = nil)
+    def initialize(old_url, query_string='', server_name=nil)
       @old_url = old_url
       @query_string = query_string
       @old_url_joined = [old_url, query_string].join('?').sub(%r{[/?\s]*$}, '').strip

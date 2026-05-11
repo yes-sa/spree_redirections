@@ -27,6 +27,7 @@ group :test do
   gem 'observer'
   gem 'rails-controller-testing'
   gem 'spree', spree_opts
+  gem 'spree_backend', '< 5.0'
   gem 'spree_emails', spree_opts
   gem 'webmock'
 end

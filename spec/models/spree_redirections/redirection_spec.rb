@@ -15,11 +15,6 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
 
   let(:redirection) { create(:redirection, **valid_attributes) }
   let(:store) { create(:store, default: true) }
-  let(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
-
-  before do
-    custom_domain
-  end
 
   describe 'validations' do
     context 'with valid attributes' do

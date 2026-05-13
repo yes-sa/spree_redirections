@@ -19,7 +19,7 @@ module SpreeRedirections
 
       def redirect_from_old_slug
         taxon_permalink = taxons.order(:lft).filter_map(&:permalink).last
-        return unless slug.changed?
+        return unless slug_changed?
         return if slug.nil? || taxon_permalink.nil?
 
         create_redirection(taxon_permalink)

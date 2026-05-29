@@ -18,8 +18,8 @@ module SpreeRedirections
         create_redirection(slug, taxon_permalink, 't')
       end
 
-      def remove_old_friendly_id_slugs
-        slugs.where.not(slug: slug).delete_all
+      def remove_old_friendly_id_slugs(new_slug = nil)
+        slugs.where.not(slug: new_slug || slug).delete_all
       end
 
       def redirect_from_old_slug

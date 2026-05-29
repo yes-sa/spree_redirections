@@ -19,8 +19,8 @@ module SpreeRedirections
     default_scope -> { where(deleted_at: nil).order(created_at: :desc) }
     scope :with_archival, -> { unscoped.where.not(deleted_at: nil).order(deleted_at: :desc) }
 
-    def destroy(current_user:)
-      update(deleted_at: Time.current, deleted_by: current_user)
+    def destroy(current_user: nil)
+      update(deleted_at: Time.current, deleted_by: current_user || try(:current_user) || 'Unknown')
     end
 
     def self.ransackable_attributes(_auth_object = nil)

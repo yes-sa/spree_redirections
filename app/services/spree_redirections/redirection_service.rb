@@ -44,9 +44,9 @@ module SpreeRedirections
           FROM #{table_name}
           WHERE #{table_name}.old_url = :old_url
             AND #{table_name}.store_url = :store_url
-    
+
           UNION ALL
-    
+
           SELECT
             next_redirections.*,
             redirect_chain.depth + 1 AS depth,

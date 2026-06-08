@@ -21,15 +21,13 @@ module SpreeRedirections
     end
 
     def redirect
-      return @redirect if defined?(@redirect)
-
-      @redirect = SpreeRedirections::Redirection.find_by_sql([
-                                                               recursive_redirection_search,
-                                                               {
-                                                                 old_url: @old_url_joined,
-                                                                 store_url: @store_url
-                                                               }
-                                                             ]).first
+      SpreeRedirections::Redirection.find_by_sql([
+                                                   recursive_redirection_search,
+                                                   {
+                                                     old_url: @old_url_joined,
+                                                     store_url: @store_url
+                                                   }
+                                                 ]).first
     end
 
     def recursive_redirection_search

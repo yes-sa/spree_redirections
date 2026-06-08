@@ -19,7 +19,7 @@ module SpreeRedirections
         )
 
         redirection.save!
-      rescue
+      rescue StandardError
         true
       end
 

@@ -13,9 +13,11 @@ module SpreeRedirections
 
     def call
       return if @store_url.blank? || @old_url.blank? || @old_url_joined.blank?
-      return if redirect.blank?
 
-      [redirect.http_status, { 'Location' => redirect.new_url }, [I18n.t('spree.redirection.redirecting')]]
+      redirection = redirect
+      return if redirection.blank?
+
+      [redirection.http_status, { 'Location' => redirection.new_url }, [I18n.t('spree.redirection.redirecting')]]
     rescue StandardError => e
       raise RedirectionServiceError, e
     end

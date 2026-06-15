@@ -74,14 +74,24 @@ module SpreeRedirections
 
         return if old_status == new_status
 
-        if active?
-          product_transitioned_to_active
+        if active? && in_stock?
+          remove_all_locales_redirections
         else
-          product_transitioned_to_non_active
+          create_all_locales_redirections
         end
       end
 
-      def product_transitioned_to_non_active
+      def handle_product_stocks_change(product_stock_state)
+        if product_stock_state && active?
+          remove_all_locales_redirections
+        else
+          create_all_locales_redirections
+        end
+      end
+
+      private
+
+      def create_all_locales_redirections
         translations.each do |translation|
           locale = translation.locale
           I18n.with_locale(locale) do
@@ -90,7 +100,7 @@ module SpreeRedirections
         end
       end
 
-      def product_transitioned_to_active
+      def remove_all_locales_redirections
         translations.each do |translation|
           locale = translation.locale
           I18n.with_locale(locale) do

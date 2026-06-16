@@ -3,10 +3,6 @@
 module SpreeRedirections
   module Spree
     module ProductDecorator
-      def self.prepended(base)
-        base.after_update_commit :handle_product_status_transition, if: :saved_change_to_status?
-      end
-
       def create_redirection(from, to, type, product_id, locale, published = true)
         old_url = "/#{locale}/p/#{from}"
         new_url = "/#{locale}/#{type}/#{to}"
@@ -66,47 +62,6 @@ module SpreeRedirections
         return if existing_redirection.blank?
 
         existing_redirection.delete_all
-      end
-
-      # Redirect from archived or drafted product
-      def handle_product_status_transition
-        old_status, new_status = saved_change_to_status
-
-        return if old_status == new_status
-
-        if active? && in_stock?
-          remove_all_locales_redirections
-        else
-          create_all_locales_redirections
-        end
-      end
-
-      def handle_product_stocks_change(product_stock_state)
-        if product_stock_state && active?
-          remove_all_locales_redirections
-        else
-          create_all_locales_redirections
-        end
-      end
-
-      private
-
-      def create_all_locales_redirections
-        translations.each do |translation|
-          locale = translation.locale
-          I18n.with_locale(locale) do
-            redirect_from_destroyed_product(id, locale)
-          end
-        end
-      end
-
-      def remove_all_locales_redirections
-        translations.each do |translation|
-          locale = translation.locale
-          I18n.with_locale(locale) do
-            check_for_outdated_taxon_redirection(slug, id, locale)
-          end
-        end
       end
     end
   end

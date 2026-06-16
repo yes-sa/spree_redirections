@@ -31,10 +31,13 @@ module SpreeRedirections
       end
 
       def redirect_from_destroyed_product(product_id, locale)
-        taxon_permalink = taxons.order(:lft).filter_map(&:permalink).last
-        return if slug.nil? || taxon_permalink.nil?
+        I18n.with_locale(locale) do
+          taxon_permalink = taxons.order(:lft).filter_map(&:permalink).last
+          destroyed_product_slug = translations.where(locale:)&.first&.slug
+          return if destroyed_product_slug.nil? || taxon_permalink.nil?
 
-        create_redirection(slug, taxon_permalink, 't', product_id, locale, false)
+          create_redirection(destroyed_product_slug, taxon_permalink, 't', product_id, locale, false)
+        end
       end
 
       def remove_old_friendly_id_slugs(new_slug = nil)

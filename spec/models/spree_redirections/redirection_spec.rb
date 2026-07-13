@@ -15,11 +15,6 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
 
   let(:redirection) { create(:redirection, **valid_attributes) }
   let(:store) { create(:store, default: true) }
-  let(:custom_domain) { create(:custom_domain, store: store, url: store.url) }
-
-  before do
-    custom_domain
-  end
 
   describe 'validations' do
     context 'with valid attributes' do
@@ -79,24 +74,6 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
             expect(redirection.errors[:http_status])
               .to include(I18n.t('spree.errors.invalid_http_status'))
           end
-        end
-      end
-    end
-
-    context 'existing_store validation' do
-      context 'with correct store_url' do
-        it 'is valid' do
-          expect(redirection).to be_valid
-        end
-      end
-
-      context 'with not existing store_url' do
-        it 'is not valid' do
-          redirection.store_url = 'not_exists'
-
-          expect(redirection).not_to be_valid
-          expect(redirection.errors[:store_url])
-            .to include(I18n.t('spree.errors.store_not_found'))
         end
       end
     end

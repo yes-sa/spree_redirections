@@ -13,15 +13,14 @@ module SpreeRedirections
                 message: I18n.t('spree.redirection.errors.relative_old_url')
               }
     validate :correct_http_status
-    validate :existing_store
     validate :external_new_url_format
     validate :not_admin_redirection
 
     default_scope -> { where(deleted_at: nil).order(created_at: :desc) }
     scope :with_archival, -> { unscoped.where.not(deleted_at: nil).order(deleted_at: :desc) }
 
-    def destroy(current_user:)
-      update(deleted_at: Time.current, deleted_by: current_user)
+    def destroy(current_user: nil)
+      update(deleted_at: Time.current, deleted_by: current_user || try(:current_user) || 'Unknown')
     end
 
     def self.ransackable_attributes(_auth_object = nil)
@@ -38,12 +37,6 @@ module SpreeRedirections
       return if %w[301 302 303].include?(http_status)
 
       errors.add(:http_status, I18n.t('spree.errors.invalid_http_status'))
-    end
-
-    def existing_store
-      return if Spree::CustomDomain.find_by(url: store_url).present?
-
-      errors.add(:store_url, I18n.t('spree.errors.store_not_found'))
     end
 
     def external_new_url_format

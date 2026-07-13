@@ -20,16 +20,15 @@ group :development, :test do
 end
 
 group :test do
-  spree_opts = '~> 5.2'
+  spree_opts = '~> 4.10'
   gem 'abbrev'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'observer'
   gem 'rails-controller-testing'
   gem 'spree', spree_opts
-  gem 'spree_admin', spree_opts
+  gem 'spree_backend', '< 5.0'
   gem 'spree_emails', spree_opts
-  gem 'spree_storefront', spree_opts
   gem 'webmock'
 end
 

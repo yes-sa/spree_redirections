@@ -23,9 +23,10 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  spree_opts = '~> 5.2'
+  spree_opts = '~> 4.10'
   s.add_dependency 'spree', spree_opts
   s.add_dependency 'spree_api', spree_opts
+  s.add_dependency 'spree_backend', '< 5.0'
   s.metadata['rubygems_mfa_required'] = 'true'
 
   s.add_dependency 'rails', '>= 7.2'

@@ -3,7 +3,7 @@
 module SpreeRedirections
   module Spree
     module ProductDecorator
-      def create_redirection(from, to, type, product_id, locale, published = true)
+      def create_redirection(from, to, type, product_id, locale, published = true) # rubocop:disable Metrics/ParameterLists
         old_url = "/#{locale}/p/#{from}"
         new_url = "/#{locale}/#{type}/#{to}"
         store_url = ENV.fetch('FRONT_URL', nil)

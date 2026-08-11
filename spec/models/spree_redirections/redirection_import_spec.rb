@@ -3,11 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Importing redirections from a CSV', type: :model do
-  let!(:store) { create(:store, default: true) }
-  let!(:custom_domain) { create(:custom_domain, store: store, url: 'www.example.com') }
+  let(:store) { create(:store, default: true) }
+  let(:custom_domain) { create(:custom_domain, store: store, url: 'www.example.com') }
   let(:import) { create(:redirection_import) }
 
   it 'creates a redirection for every row in the file' do
+    custom_domain
     import.preferred_inline = true
     import.save!
 

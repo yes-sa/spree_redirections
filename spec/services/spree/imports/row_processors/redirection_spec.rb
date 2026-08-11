@@ -3,11 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Spree::Imports::RowProcessors::Redirection, type: :model do
-  let!(:store) { create(:store, default: true) }
-  let!(:custom_domain) { create(:custom_domain, store: store, url: 'www.example.com') }
+  let(:store) { create(:store, default: true) }
+  let(:custom_domain) { create(:custom_domain, store: store, url: 'www.example.com') }
   let(:import) { create(:redirection_import) }
 
   before do
+    custom_domain
     %w[store_url old_url new_url http_status external_redirection].each do |field|
       import.mappings.create!(schema_field: field, file_column: field)
     end

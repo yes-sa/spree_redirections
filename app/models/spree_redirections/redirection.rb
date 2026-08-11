@@ -6,13 +6,11 @@ module SpreeRedirections
     # polymorphic `item` (e.g. Spree::Api::V3::ImportRowSerializer#item_id) —
     # without it, completing an imported row raises NoMethodError.
     include Spree::PrefixedId
-    has_prefix_id :redir
 
-    # `has_prefix_id` repoints #to_param at the prefixed id, but our routes/controller
-    # (`Spree::Admin::RedirectionsController#destroy`) still look records up by plain
-    # numeric id, so keep #to_param on the numeric id to avoid breaking those URLs.
-    def to_param
-      id.to_s
+    def prefixed_id
+      return nil if id.blank?
+
+      "redir_#{Spree::PrefixedId::SQIDS.encode([id])}"
     end
 
     validates :http_status, :old_url, :new_url, :store_url, presence: true

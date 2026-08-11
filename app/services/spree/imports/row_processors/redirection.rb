@@ -25,17 +25,24 @@ module Spree
         def assign_redirection_attributes(redirection)
           redirection.new_url = attributes['new_url'].to_s.strip
           redirection.http_status = attributes['http_status'].to_s.strip
-          if attributes['external_redirection'].present?
-            redirection.external_redirection = to_boolean(attributes['external_redirection'])
-          end
+          assign_external_redirection(redirection)
           redirection.created_by = created_by_name
+        end
+
+        # Only touches the flag when the CSV row actually maps it, so a re-import that
+        # omits this column doesn't clobber an existing redirection's current value.
+        def assign_external_redirection(redirection)
+          raw = attributes['external_redirection']
+          return if raw.blank?
+
+          redirection.external_redirection = truthy?(raw)
         end
 
         def created_by_name
           import.user.respond_to?(:full_name) ? import.user.full_name : import.user&.email
         end
 
-        def to_boolean(value)
+        def truthy?(value)
           value.to_s.strip.downcase.in?(%w[true yes 1 y])
         end
       end

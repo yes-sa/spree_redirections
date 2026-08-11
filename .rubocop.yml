@@ -22,6 +22,7 @@ Style/Documentation:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - lib/spree_redirections/factories.rb
 RSpec/MultipleMemoizedHelpers:
   Exclude:
     - spec/**/*

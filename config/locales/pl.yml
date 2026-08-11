@@ -34,3 +34,4 @@ pl:
       store_url: Adres sklepu
       success: Pomyślnie zapisane
       yess: Tak
+    redirections: Przekierowania

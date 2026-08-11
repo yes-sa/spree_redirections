@@ -1,0 +1,3 @@
+store_url,old_url,new_url,http_status,external_redirection
+www.example.com,/old-1,/new-1,301,false
+www.example.com,/old-2,https://www.external-example.com/new-2,302,true

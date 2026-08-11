@@ -28,6 +28,13 @@ module SpreeRedirections
       app.config.importmap.cache_sweepers << root.join('app/javascript')
     end
 
+    # spree_core registers its own import types in its `config.after_initialize`;
+    # this one runs afterwards (spree_core is a load-order dependency), so the array
+    # is already present to append to.
+    config.after_initialize do
+      Rails.application.config.spree.import_types << Spree::Imports::Redirections
+    end
+
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)

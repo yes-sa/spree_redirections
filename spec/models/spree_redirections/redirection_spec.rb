@@ -21,6 +21,18 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     custom_domain
   end
 
+  describe '#prefixed_id' do
+    it 'returns a Stripe-style prefixed id' do
+      expect(redirection.prefixed_id).to match(/\Aredir_\w+\z/)
+    end
+  end
+
+  describe '#to_param' do
+    it 'stays the plain numeric id, since routes/controller look up by numeric id' do
+      expect(redirection.to_param).to eq(redirection.id.to_s)
+    end
+  end
+
   describe 'validations' do
     context 'with valid attributes' do
       it 'is valid' do

@@ -25,6 +25,16 @@ en:
           exists
       external_redirection: External Redirection
       http_status: HTTP Status
+      import:
+        errors:
+          old_url_missing: Old URL is required
+          store_url_missing: Store URL is required
+        field_names:
+          external_redirection: external_redirection
+          http_status: http_status
+          new_url: new_url
+          old_url: old_url
+          store_url: store_url
       new_redirection: New Redirection
       new_url: New URL
       nos: false

@@ -25,6 +25,16 @@ pl:
           sklepu
       external_redirection: Przekierowanie zewnętrzne
       http_status: Status HTTP
+      import:
+        errors:
+          old_url_missing: Old URL is required
+          store_url_missing: Store URL is required
+        field_names:
+          external_redirection: external_redirection
+          http_status: http_status
+          new_url: new_url
+          old_url: old_url
+          store_url: store_url
       new_redirection: Nowe przekierowanie
       new_url: Nowy adres URL
       nos: Nie

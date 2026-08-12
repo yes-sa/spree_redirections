@@ -16,8 +16,8 @@ module Spree
         def find_or_initialize_redirection
           store_url = attributes['store_url'].to_s.strip
           old_url = attributes['old_url'].to_s.strip
-          raise ArgumentError, 'Store URL is required' if store_url.blank?
-          raise ArgumentError, 'Old URL is required' if old_url.blank?
+          raise ArgumentError, I18n.t('spree.redirection.import.errors.store_url_missing') if store_url.blank?
+          raise ArgumentError, I18n.t('spree.redirection.import.errors.old_url_missing') if old_url.blank?
 
           ::SpreeRedirections::Redirection.find_or_initialize_by(store_url: store_url, old_url: old_url)
         end

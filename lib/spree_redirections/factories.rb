@@ -31,4 +31,18 @@ FactoryBot.define do
       deleted_by { Faker::Name.name }
     end
   end
+
+  factory :redirection_import, class: 'Spree::Imports::Redirections' do
+    owner { Spree::Store.default || create(:store) }
+    association :user, factory: :admin_user
+    type { 'Spree::Imports::Redirections' }
+
+    after(:create) do |import|
+      import.attachment.attach(
+        io: File.open(SpreeRedirections::Engine.root.join('spec', 'fixtures', 'files', 'redirections_import.csv')),
+        filename: 'redirections_import.csv',
+        content_type: 'text/csv'
+      )
+    end
+  end
 end

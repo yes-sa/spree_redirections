@@ -1,5 +1,17 @@
 ---
 pl:
+  activerecord:
+    attributes:
+      redirection:
+        created_at: Utworzono
+        created_by: Utworzono Przez
+        deleted_at: Usunięto
+        deleted_by: Usunięto Przez
+        external_redirection: Przekierowanie zewnętrzne
+        http_status: Status HTTP
+        new_url: Nowy adres URL
+        old_url: Stary adres URL
+        store_url: Adres sklepu
   spree:
     errors:
       invalid_http_status: Niepoprawny status HTTP
@@ -15,8 +27,10 @@ pl:
       errors:
         destroy_failed: Nie udało się usunąć
         invalid_http_status: Niepoprawny status przekierowania
-        invalid_url: Musi zaczynać się z https:// i kończyć z '.www'
+        invalid_url: Musi zaczynać się z 'https://www.'
         redirection_to_admin: Przekierowanie nie może kierować na/z admina
+        relative_new_url: Ścieżka docelowa może być tylko relacyjna (np. /produkty/pierscionki),
+          chyba że przekierowanie jest zewnętrzne
         relative_old_url: Ścieżka początkowa może być tylko relacyjna (np. /produkty/pierścionki)
         store_not_found: Sklep o podanym adresie URL nie istnieje
         store_url_hint: If you test on development, make sure you created Custom Domain
@@ -25,6 +39,19 @@ pl:
           sklepu
       external_redirection: Przekierowanie zewnętrzne
       http_status: Status HTTP
+      import:
+        back_to_redirections: Powrót do przekierowań
+        errors:
+          invalid_external_redirection: 'Nierozpoznana wartość Przekierowania zewnętrznego:
+            "%{value}"'
+          old_url_missing: Stary adres URL jest wymagany
+          store_url_missing: Adres sklepu jest wymagany
+        field_names:
+          external_redirection: external_redirection
+          http_status: http_status
+          new_url: new_url
+          old_url: old_url
+          store_url: store_url
       new_redirection: Nowe przekierowanie
       new_url: Nowy adres URL
       nos: Nie
@@ -34,3 +61,4 @@ pl:
       store_url: Adres sklepu
       success: Pomyślnie zapisane
       yess: Tak
+    redirections: Przekierowania

@@ -21,6 +21,18 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
     custom_domain
   end
 
+  describe '#prefixed_id' do
+    it 'returns a Stripe-style prefixed id' do
+      expect(redirection.prefixed_id).to match(/\Aredir_\w+\z/)
+    end
+  end
+
+  describe '#to_param' do
+    it 'stays the plain numeric id, since routes/controller look up by numeric id' do
+      expect(redirection.to_param).to eq(redirection.id.to_s)
+    end
+  end
+
   describe 'validations' do
     context 'with valid attributes' do
       it 'is valid' do
@@ -118,10 +130,20 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
       context 'when external_redirection is false' do
         it 'does not validate the external url format' do
           redirection.external_redirection = false
-          redirection.new_url = 'not-a-url'
+          redirection.new_url = '/still-relative'
 
           expect(redirection).to be_valid
           expect(redirection.errors[:new_url]).to be_blank
+        end
+
+        it 'leaves a non-relative target to internal_new_url_format' do
+          redirection.external_redirection = false
+          redirection.new_url = 'not-a-url'
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).not_to include(error_message)
+          expect(redirection.errors[:new_url])
+            .to include(I18n.t('spree.redirection.errors.relative_new_url'))
         end
       end
 
@@ -173,6 +195,69 @@ RSpec.describe SpreeRedirections::Redirection, type: :model do
             expect(redirection).not_to be_valid
             expect(redirection.errors[:new_url]).to include(error_message)
           end
+        end
+      end
+    end
+
+    context 'internal_new_url_format validation' do
+      let(:error_message) { I18n.t('spree.redirection.errors.relative_new_url') }
+
+      context 'when external_redirection is false' do
+        before { redirection.external_redirection = false }
+
+        it 'is valid with a rooted relative path' do
+          redirection.new_url = '/products/rings'
+
+          expect(redirection).to be_valid
+        end
+
+        it 'is valid with a bare slash' do
+          redirection.new_url = '/'
+
+          expect(redirection).to be_valid
+        end
+
+        it 'is invalid with an absolute https url' do
+          redirection.new_url = 'https://www.example.com/path'
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).to include(error_message)
+        end
+
+        it 'is invalid with a host-only url' do
+          redirection.new_url = 'www.example.com/path'
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).to include(error_message)
+        end
+
+        it 'is invalid with a protocol-relative url' do
+          redirection.new_url = '//evil.example.com'
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).to include(error_message)
+        end
+      end
+
+      context 'when external_redirection is true' do
+        before { redirection.external_redirection = true }
+
+        it 'does not require a relative path' do
+          redirection.new_url = 'https://www.example.com/path'
+
+          expect(redirection).to be_valid
+          expect(redirection.errors[:new_url]).to be_blank
+        end
+      end
+
+      context 'when new_url is blank' do
+        it 'leaves the complaint to the presence validation' do
+          redirection.external_redirection = false
+          redirection.new_url = ''
+
+          expect(redirection).not_to be_valid
+          expect(redirection.errors[:new_url]).to be_present
+          expect(redirection.errors[:new_url]).not_to include(error_message)
         end
       end
     end

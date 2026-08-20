@@ -26,9 +26,16 @@ Gem::Specification.new do |s|
   spree_opts = '~> 5.2'
   s.add_dependency 'spree', spree_opts
   s.add_dependency 'spree_api', spree_opts
+  # Provides Spree::CustomDomain, which spree_core dropped from 5.6+ (moved out into
+  # spree_custom_domains, a dependency of spree_multi_store) — Redirection#existing_store
+  # validates store_url against it. Declared directly too: spree_multi_store never
+  # `require`s spree_custom_domains itself, so Bundler.require (which only
+  # auto-requires gems the Gemfile names directly) won't load its engine otherwise.
+  s.add_dependency 'spree_custom_domains', '>= 0.1'
+  s.add_dependency 'spree_multi_store', '>= 1.0'
   s.metadata['rubygems_mfa_required'] = 'true'
 
-  s.add_dependency 'rails', '>= 7.2'
+  s.add_dependency 'rails', '>= 8.0'
   s.add_dependency 'rspec-rails'
   s.add_dependency 'rubocop-rspec'
   s.add_dependency 'spree_extension'

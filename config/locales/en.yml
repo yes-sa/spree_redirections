@@ -29,6 +29,8 @@ en:
         invalid_http_status: Incorrect redirection HTTP status
         invalid_url: Must start with 'https://www.'
         redirection_to_admin: Redirection must not target admin site
+        relative_new_url: Must be a relative path only (e.g. /products/rings) unless
+          the redirection is external
         relative_old_url: Must be a relative path only (e.g. /products/rings)
         store_not_found: Store with given URL does not exist
         store_url_hint: If you test on development, make sure you created Custom Domain

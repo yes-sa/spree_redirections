@@ -29,6 +29,8 @@ pl:
         invalid_http_status: Niepoprawny status przekierowania
         invalid_url: Musi zaczynać się z 'https://www.'
         redirection_to_admin: Przekierowanie nie może kierować na/z admina
+        relative_new_url: Ścieżka docelowa może być tylko relacyjna (np. /produkty/pierscionki),
+          chyba że przekierowanie jest zewnętrzne
         relative_old_url: Ścieżka początkowa może być tylko relacyjna (np. /produkty/pierścionki)
         store_not_found: Sklep o podanym adresie URL nie istnieje
         store_url_hint: If you test on development, make sure you created Custom Domain

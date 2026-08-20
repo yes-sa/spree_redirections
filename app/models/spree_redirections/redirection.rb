@@ -13,6 +13,8 @@ module SpreeRedirections
       "redir_#{Spree::PrefixedId::SQIDS.encode([id])}"
     end
 
+    RELATIVE_URL_FORMAT = %r{\A/(?!/)[a-zA-Z0-9/\-_?&=]*\z}
+
     validates :http_status, :old_url, :new_url, :store_url, presence: true
     validates :old_url,
               uniqueness: {
@@ -20,12 +22,13 @@ module SpreeRedirections
                 conditions: -> { where(deleted_at: nil) },
                 message: ->(_object, _data) { I18n.t('spree.redirection.errors.uniqueness_for_store_url') }
               }, format: {
-                with: %r{\A/[a-zA-Z0-9/\-_?&=]*\z},
+                with: RELATIVE_URL_FORMAT,
                 message: ->(_object, _data) { I18n.t('spree.redirection.errors.relative_old_url') }
               }
     validate :correct_http_status
     validate :existing_store
     validate :external_new_url_format
+    validate :internal_new_url_format
     validate :not_admin_redirection
 
     default_scope -> { where(deleted_at: nil).order(created_at: :desc) }
@@ -70,6 +73,13 @@ module SpreeRedirections
       return if allowed_prefixes.any? { |prefix| new_url.start_with?(prefix) }
 
       errors.add(:new_url, I18n.t('spree.redirection.errors.invalid_url'))
+    end
+
+    def internal_new_url_format
+      return if new_url.blank? || external_redirection
+      return if RELATIVE_URL_FORMAT.match?(new_url)
+
+      errors.add(:new_url, I18n.t('spree.redirection.errors.relative_new_url'))
     end
 
     def not_admin_redirection

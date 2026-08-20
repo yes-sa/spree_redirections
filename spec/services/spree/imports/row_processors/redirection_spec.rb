@@ -82,7 +82,68 @@ RSpec.describe Spree::Imports::RowProcessors::Redirection, type: :model do
       end
 
       it 'raises an error the caller can record as a row failure' do
-        expect { described_class.new(row).process! }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { described_class.new(row).process! }
+          .to raise_error(described_class::InvalidRow, /#{Regexp.escape(I18n.t('spree.errors.invalid_http_status'))}/)
+      end
+
+      it 'reports the failure entirely in the active locale' do
+        # Regression: `validates ... message: I18n.t(...)` froze those two messages to the
+        # boot locale, so a failed row mixed English and Polish in one message.
+        row_pl = build_row(
+          'store_url' => 'www.example.com',
+          'old_url' => 'not-a-relative-path',
+          'new_url' => '/new-path',
+          'http_status' => 'not-a-status',
+          'external_redirection' => 'false'
+        )
+
+        message = I18n.with_locale(:pl) do
+          described_class.new(row_pl).process!
+        rescue described_class::InvalidRow => e
+          e.message
+        end
+
+        expect(message).to include(I18n.t('spree.redirection.errors.relative_old_url', locale: :pl))
+        expect(message).to include(I18n.t('spree.errors.invalid_http_status', locale: :pl))
+        expect(message).not_to include(I18n.t('spree.redirection.errors.relative_old_url', locale: :en))
+      end
+    end
+
+    context 'with the external_redirection column' do
+      # An external redirection is only valid with an https://www. target, so the
+      # new_url has to match the boolean the row is expected to cast to.
+      def process_with(external_redirection, new_url: '/new-path')
+        row = build_row(
+          'store_url' => 'www.example.com',
+          'old_url' => "/old-#{SecureRandom.hex(4)}",
+          'new_url' => new_url,
+          'http_status' => '301',
+          'external_redirection' => external_redirection
+        )
+        described_class.new(row).process!
+      end
+
+      {
+        'prawda' => true, 'Prawda' => true, 'PRAWDA' => true, ' prawda ' => true,
+        'tak' => true, 'Tak' => true, 'true' => true, 'yes' => true, '1' => true,
+        'fałsz' => false, 'Fałsz' => false, 'FAŁSZ' => false, 'falsz' => false,
+        'nie' => false, 'Nie' => false, 'false' => false, 'no' => false, '0' => false
+      }.each do |raw, expected|
+        it "casts #{raw.inspect} to #{expected}" do
+          new_url = expected ? 'https://www.external-example.com/target' : '/new-path'
+
+          expect(process_with(raw, new_url: new_url).external_redirection).to be(expected)
+        end
+      end
+
+      it 'falls back to the column default when the value is blank' do
+        expect(process_with('').external_redirection).to be(false)
+      end
+
+      it 'fails the row on an unrecognised value rather than silently importing false' do
+        expect { process_with('moze') }
+          .to raise_error(described_class::InvalidRow,
+                          I18n.t('spree.redirection.import.errors.invalid_external_redirection', value: 'moze'))
       end
     end
 
@@ -97,8 +158,9 @@ RSpec.describe Spree::Imports::RowProcessors::Redirection, type: :model do
         )
       end
 
-      it 'raises an argument error' do
-        expect { described_class.new(row).process! }.to raise_error(ArgumentError, 'Store URL is required')
+      it 'raises a localized row error' do
+        expect { described_class.new(row).process! }
+          .to raise_error(described_class::InvalidRow, I18n.t('spree.redirection.import.errors.store_url_missing'))
       end
     end
   end

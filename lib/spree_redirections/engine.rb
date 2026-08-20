@@ -22,6 +22,18 @@ module SpreeRedirections
       app.config.assets.precompile += %w[spree_redirections_manifest]
     end
 
+    # Runs in `after_initialize`, not as a plain initializer: every engine prepends its
+    # own app/views during initialization (Rails' :add_view_paths), so whichever runs
+    # last ends up in front. As a regular initializer this depended on spree_redirections
+    # happening to initialize after spree_admin, which is not guaranteed and differs
+    # between host apps. after_initialize runs once, after every engine has had its say,
+    # so our directory is reliably first.
+    config.after_initialize do
+      ActiveSupport.on_load(:action_controller) do
+        prepend_view_path SpreeRedirections::Engine.root.join('app/view_overrides')
+      end
+    end
+
     initializer 'spree_redirections.importmap', before: 'importmap' do |app|
       app.config.importmap.paths << root.join('config/importmap.rb')
       # https://github.com/rails/importmap-rails?tab=readme-ov-file#sweeping-the-cache-in-development-and-test

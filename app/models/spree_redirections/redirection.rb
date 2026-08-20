@@ -18,10 +18,10 @@ module SpreeRedirections
               uniqueness: {
                 scope: :store_url,
                 conditions: -> { where(deleted_at: nil) },
-                message: I18n.t('spree.redirection.errors.uniqueness_for_store_url')
+                message: ->(_object, _data) { I18n.t('spree.redirection.errors.uniqueness_for_store_url') }
               }, format: {
                 with: %r{\A/[a-zA-Z0-9/\-_?&=]*\z},
-                message: I18n.t('spree.redirection.errors.relative_old_url')
+                message: ->(_object, _data) { I18n.t('spree.redirection.errors.relative_old_url') }
               }
     validate :correct_http_status
     validate :existing_store
